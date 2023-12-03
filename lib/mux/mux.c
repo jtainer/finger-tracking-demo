@@ -4,6 +4,8 @@
 // Copyright (c) 2023 Jonathan Tainer
 //
 
+// TODO: Pass in handles to I2C and reset pin instead of hardcoding them
+
 #include "main.h"
 #include "i2c.h"
 #include "mux.h"
@@ -16,9 +18,9 @@ void I2C_MUX_Init(void) {
 	HAL_GPIO_WritePin(MUX_RST_GPIO_Port, MUX_RST_Pin, GPIO_PIN_RESET);
 
 	// Set bottom 3 bits of slave address
-	HAL_GPIO_WritePin(MUX_AD0_GPIO_Port, MUX_AD0_Pin, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(MUX_AD1_GPIO_Port, MUX_AD1_Pin, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(MUX_AD2_GPIO_Port, MUX_AD2_Pin, GPIO_PIN_RESET);
+//	HAL_GPIO_WritePin(MUX_AD0_GPIO_Port, MUX_AD0_Pin, GPIO_PIN_RESET);
+//	HAL_GPIO_WritePin(MUX_AD1_GPIO_Port, MUX_AD1_Pin, GPIO_PIN_RESET);
+//	HAL_GPIO_WritePin(MUX_AD2_GPIO_Port, MUX_AD2_Pin, GPIO_PIN_RESET);
 
 	// Bring multiplexer out of reset
 	HAL_GPIO_WritePin(MUX_RST_GPIO_Port, MUX_RST_Pin, GPIO_PIN_SET);
