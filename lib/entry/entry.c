@@ -11,21 +11,26 @@
 #include "mux.h"
 #include "mpu6050.h"
 
-#define IMU_CHANNELS 16
+#define IMU_CHANNELS 3
 MPU6050_t imu[IMU_CHANNELS] = { 0 };
 
 void setup(void) {
 	I2C_MUX_Init();
-	I2C_MUX_Select(0);
-	while (MPU6050_Init(&hi2c1) == 1);
+
+	// On breadboard setup, IMUs are connected to mux channels 1-3
+	for (int i = 0; i < IMU_CHANNELS; i++) {
+		printf("Initializing IMU[%d]...", i);
+		I2C_MUX_Select(i);
+		while (MPU6050_Init(&hi2c1) == 1);
+		printf(" Success!\r\n");
+	}
 }
 
 void loop(void) {
-	static int screen_on = 0;
-	screen_on = !screen_on;
-	MPU6050_Read_All(&hi2c1, &imu[0]);
-	printf("Ang.x = %d\t\tAng.y = %d\t\tAcc.x = %d\t\tAcc.y = %d\t\tAcc.z = %d\r\n",
-		(int)imu[0].KalmanAngleX, (int)imu[0].KalmanAngleY,
-		(int)imu[0].Accel_X_RAW, (int)imu[0].Accel_Y_RAW, (int)imu[0].Accel_Z_RAW);
-	HAL_Delay(10);
+	for (int i = 0; i < IMU_CHANNELS; i++) {
+		I2C_MUX_Select(i+1);
+		MPU6050_Read_All(&hi2c1, &imu[i]);
+		printf("IMU[%d]: x = %d\ty = %d\r\n", i, (int)imu[i].KalmanAngleX, (int)imu[i].KalmanAngleY);
+	}
+	HAL_Delay(100);
 }
