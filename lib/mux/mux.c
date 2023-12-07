@@ -17,11 +17,7 @@ int I2C_MUX_Init(void) {
 	// Hold multiplexer in reset while setting address lines
 	HAL_GPIO_WritePin(MUX_RST_GPIO_Port, MUX_RST_Pin, GPIO_PIN_RESET);
 
-	// Set bottom 3 bits of slave address
-//	HAL_GPIO_WritePin(MUX_AD0_GPIO_Port, MUX_AD0_Pin, GPIO_PIN_RESET);
-//	HAL_GPIO_WritePin(MUX_AD1_GPIO_Port, MUX_AD1_Pin, GPIO_PIN_RESET);
-//	HAL_GPIO_WritePin(MUX_AD2_GPIO_Port, MUX_AD2_Pin, GPIO_PIN_RESET);
-
+	// Overkill but it works
 	HAL_Delay(500);
 
 	// Bring multiplexer out of reset
@@ -29,20 +25,25 @@ int I2C_MUX_Init(void) {
 
 	HAL_Delay(500);
 
-	// All channels are disabled by defaultq
+	// All channels are disabled by default
 //	return I2C_MUX_Select(0);
 	return 0;
 }
 
 int I2C_MUX_Select(int ch) {
-	uint8_t data[1] = { 1 << ch };
-	HAL_StatusTypeDef res = HAL_I2C_Master_Transmit(&hi2c1, I2C_MUX_ADDR<<1, data, sizeof(data), I2C_MUX_TIMEOUT);
-	if (res == HAL_OK) {
-		HAL_Delay(100);
-		return 0;
-	}
-	else {
+	uint8_t txdata[1] = { 1 << ch };
+	uint8_t rxdata[1] = { 0 };
+	HAL_StatusTypeDef res;
+	res = HAL_I2C_Master_Transmit(&hi2c1, I2C_MUX_ADDR<<1, txdata, sizeof(txdata), I2C_MUX_TIMEOUT);
+	if (res != HAL_OK) {
 		return 1;
 	}
+	res = HAL_I2C_Master_Receive(&hi2c1, I2C_MUX_ADDR<<1, rxdata, sizeof(rxdata), I2C_MUX_TIMEOUT);
+	if (res != HAL_OK)
+		return 1;
+	else if (txdata[0] != rxdata[0])
+		return 1;
+	else
+		return 0;
 }
 
