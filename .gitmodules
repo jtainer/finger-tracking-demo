@@ -1,0 +1,4 @@
+[submodule "external/MPU6050"]
+	path = external/MPU6050
+	url = https://github.com/jtainer/MPU6050
+	branch = euler
