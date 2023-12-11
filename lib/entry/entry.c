@@ -28,7 +28,7 @@ void setup(void) {
 	for (int i = 0; i < IMU_CHANNELS; i++) {
 		printf("Initializing IMU[%d]...", i);
 		I2C_MUX_Select(i);
-		err = MPU6050_Init(&hi2c1);
+		err = MPU6050_Init(&hi2c1, &imu[i]);
 		if (!err) {
 			printf(" Success!\r\n");
 		}
@@ -50,5 +50,5 @@ void loop(void) {
 		printf("IMU[%d]: x = %f\ty = %f\r\n",
 			i, imu[i].KalmanAngleX, imu[i].KalmanAngleY);
 	}
-	HAL_Delay(1000);
+	HAL_Delay(20);
 }
